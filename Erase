@@ -1,0 +1,108 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+# @Time   : 2022/5/27 17:24
+# @Author : 跑代码前必须上柱香
+# @File   : count_color.py
+# @Emil   : 467387544@qq.com
+
+import numpy as np
+from PIL import Image
+import cv2
+"""
+#批处理热力图和原图；img原图；img1热图
+"""
+
+def cut_img_important(img,img1):
+    # img.show()#原图
+    # img1.show()
+    img_array = np.array(img)
+    shape = img_array.shape
+    #计算新图的图片长度以及长宽
+    height = shape[0]
+    width = shape[1]
+    print(height,width)
+    dst = np.zeros((height, width, 3))
+
+    img1_array = np.array(img1)
+    baoliujubu2 = np.array(img1)
+    shape = img1_array.shape
+    # 计算新图的图片长度以及长宽
+    height1 = shape[0]
+    width1 = shape[1]
+    print(height1, width1)
+    dst1 = np.zeros((height1, width1, 3))
+
+    baoliujubu1 = np.array(img)
+    jubu_shape = img_array.shape
+    #计算新图的图片长度以及长宽
+    jubu1_height = jubu_shape[0]
+    jubu1_width = jubu_shape[1]
+    dst2 = np.zeros((jubu1_height, jubu1_width, 3))
+
+    baoliujubu2 = np.array(img1)
+    jubu2_shape = img_array.shape
+    #计算新图的图片长度以及长宽
+    jubu2_height = jubu2_shape[0]
+    jubu2_width = jubu2_shape[1]
+    dst3 = np.zeros((jubu2_height, jubu2_width, 3))
+
+    for h in range(0, height): #统计热力图中的像素值
+        for w in range(0, width):
+            (b, g, r) = img_array[h,w]
+            if r < b :           #如果blue值小于red值，既像素置信度大于50，那么该像素点为白色,同时已知该像素点的位置
+                img1_array[h,w] = (255,255,255)
+                img_array[h, w] = (255, 255, 255)
+            if r > b:
+                baoliujubu1[h,w] = (255, 255, 255)
+                baoliujubu2[h, w] = (255, 255, 255)
+            dst[h,w] = img_array[h,w]
+            dst1[h, w] = img1_array[h, w]
+            dst2[h, w] = baoliujubu1[h,w]
+            dst3[h, w] = baoliujubu2[h, w]
+    #
+    bgr_img = dst[:, :, ::-1]
+    bgr1_img = dst1[:, :, ::-1]
+    bgr2_img = dst2[:, :, ::-1]
+    bgr3_img = dst3[:, :, ::-1]
+    # cv2.imwrite('heatmap/original.jpg', bgr_img)
+    i = 6
+    cv2.imwrite('erase/new{}.jpg'.format(i), bgr1_img)
+    cv2.imwrite('erase/jubu{}.jpg'.format(i), bgr3_img)
+
+
+def img_fusion(jubu1,jubu2,img):
+    img3_array = np.array(jubu1)
+    shape3 = img3_array.shape
+    #计算新图的图片长度以及长宽
+    height3 = shape3[0]
+    width3 = shape3[1]
+    # print(height3,width3)
+    dst3 = np.zeros((height3, width3, 3))
+
+    img4_array = np.array(jubu2)
+    shape4 = img4_array.shape
+    # 计算新图的图片长度以及长宽
+    height4 = shape4[0]
+    width4 = shape4[1]
+    dst4 = np.zeros((height4, width4, 3))
+    color_and_position = []
+
+    for h3 in range(0, height3): #统计热力图中的像素值
+        for w3 in range(0, width3):
+            (b3, g3, r3) = img3_array[h3, w3] #先给jubu1赋值
+            if (b3,g3,r3) != (255,255,255): #若不是空白的
+                color_and_position.append([h3,w3,b3,g3,r3]) #建立列表
+
+
+    for list in color_and_position:
+        h4,w4 = list[0:2]  #局部1宽和高
+        b4,g4,r4 = list[2:5]  #局部1像素
+        px = img[h4,w4]       #找到局部2中的局部一中有像素的地方
+        px = b4,g4,r4
+        print(px)
+        cv2.imwrite(''.px)
+
+
+#输入一个热力图与一个原图（顺序不能错）
+cut_img_important()
+# img_fusion(jubu1,jubu2,img)
