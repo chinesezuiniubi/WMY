@@ -1,2 +1,2 @@
 # WMY
-Heat Map Picture Erase and Merge
+这部分代码提供了两部分内容，分别是注意力图象擦除的关键代码和联合损失函数代码
